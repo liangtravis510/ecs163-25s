@@ -201,21 +201,24 @@ function createRadarChart(data) {
 	function updateChart(pokemon) {
 		svg.selectAll("*").remove();
 
+		const radarData = stats.map(stat => +pokemon[stat] || 0);
+		const maxStat = d3.max(radarData) + 5 || 100; // Fallback to 100 if missing
+
 		const angleSlice = (Math.PI * 2) / stats.length;
-		const scale = d3.scaleLinear().domain([0, 255]).range([0, radius]);
+		const scale = d3.scaleLinear().domain([0, maxStat]).range([0, radius]);
 
 		// Draw axis lines, labels, and stat values
 		stats.forEach((stat, i) => {
 			const angle = angleSlice * i - Math.PI / 2;
-			const labelX = centerX + (scale(255) + 20) * Math.cos(angle);
-			const labelY = centerY + (scale(255) + 20) * Math.sin(angle);
+			const labelX = centerX + (scale(maxStat) + 20) * Math.cos(angle);
+			const labelY = centerY + (scale(maxStat) + 20) * Math.sin(angle);
 
 			// Axis line
 			svg.append("line")
 				.attr("x1", centerX)
 				.attr("y1", centerY)
-				.attr("x2", centerX + scale(255) * Math.cos(angle))
-				.attr("y2", centerY + scale(255) * Math.sin(angle))
+				.attr("x2", centerX + scale(maxStat) * Math.cos(angle))
+				.attr("y2", centerY + scale(maxStat) * Math.sin(angle))
 				.attr("stroke", "#ccc");
 
 			// Axis label (Stat name)
@@ -224,25 +227,22 @@ function createRadarChart(data) {
 				.attr("y", labelY)
 				.attr("text-anchor", "middle")
 				.attr("dominant-baseline", "middle")
-				.attr("font-weight", "medium")
+				.attr("font-weight", "bold")
+				.style("font-size", "12px")
 				.text(stat.replace("_", " "));
 
 			// Stat number (Actual stat value for selected Pokémon)
-			const statValue = +pokemon[stat] || 0;
 			svg.append("text")
 				.attr("x", labelX)
-				.attr("y", labelY + 14) // offset downward by 14px
+				.attr("y", labelY + 15)
 				.attr("text-anchor", "middle")
 				.attr("dominant-baseline", "middle")
 				.style("font-size", "12px")
 				.style("fill", "#333")
-				.text(statValue);
+				.text(+pokemon[stat] || 0);
 		});
 
-		// Build data points for the polygon
-		const radarData = stats.map(stat => +pokemon[stat] || 0);
-
-		// Create the radar polygon path
+		// Create the radar polygon path using your approach
 		const line = d3.lineRadial()
 			.radius((d) => scale(d))
 			.angle((d, i) => i * angleSlice)
@@ -254,7 +254,7 @@ function createRadarChart(data) {
 			.attr("transform", `translate(${centerX},${centerY})`)
 			.attr("fill", "#1f77b4")
 			.attr("fill-opacity", 0.5)
-			.attr("stroke", "#1f77b4")
+			.attr("stroke", "#333")
 			.attr("stroke-width", 2)
 			.attr("d", line);
 
@@ -264,13 +264,14 @@ function createRadarChart(data) {
 			svg.append("circle")
 				.attr("cx", centerX + scale(d) * Math.cos(angle))
 				.attr("cy", centerY + scale(d) * Math.sin(angle))
-				.attr("r", 4)
+				.attr("r", 3)
 				.attr("fill", "#1f77b4")
-				.attr("stroke", "#fff")
+				.attr("stroke", "#333")
 				.attr("stroke-width", 1.5);
 		});
 	}
 }
+
 
 
 
