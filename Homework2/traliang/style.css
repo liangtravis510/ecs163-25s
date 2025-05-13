@@ -25,9 +25,12 @@ body {
 }
 
 #dashboard-header p {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #333;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Dashboard grid area */
