@@ -25,3 +25,7 @@ This homework assignment focus on making a data visualization dashboard for expl
 ### Parallel Coordinates Plot
 
 ![Parallel Coordinates](images/parallel_coordinates.png)
+
+### Hover funcitonallity
+
+![Hover Function1](hover_function1.png)

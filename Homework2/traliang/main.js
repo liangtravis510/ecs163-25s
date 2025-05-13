@@ -290,6 +290,8 @@ function createRadarChart(data) {
  * @param {Array} data - The loaded Pokémon data.
  */
 function createParallelCoordinates(data) {
+	let isSearchActive = false;
+
 	const svg = d3.select("#view2").append("svg");
 	const width = svg.node().clientWidth;
 	const height = svg.node().clientHeight;
@@ -339,6 +341,7 @@ function createParallelCoordinates(data) {
 
 	lines
 		.on("mouseover", function(event, d) {
+			if (isSearchActive) return;
 			d3.select(this)
 				.attr("stroke-width", 3)
 				.attr("opacity", 1);
@@ -353,6 +356,7 @@ function createParallelCoordinates(data) {
 				.style("top", (event.pageY + 10) + "px");
 		})
 		.on("mouseout", function() {
+			if (isSearchActive) return; // Don't reset if search is active
 			d3.select(this)
 				.attr("stroke-width", 1)
 				.attr("opacity", 0.5);
@@ -413,6 +417,7 @@ function createParallelCoordinates(data) {
      * @param {string} searchName - Pokémon name to highlight.
      */
 	function highlightPokemon(searchName) {
+		isSearchActive = true;
 		lines
 			.attr("stroke-width", d => d.Name.toLowerCase() === searchName ? 5 : 1)
 			.attr("opacity", d => d.Name.toLowerCase() === searchName ? 1 : 0.01);
@@ -422,6 +427,7 @@ function createParallelCoordinates(data) {
      * Resets all Pokémon lines to default stroke width and opacity.
      */
 	function resetLines() {
+		isSearchActive = false;
 		lines
 			.attr("stroke-width", 1)
 			.attr("opacity", 0.5);
