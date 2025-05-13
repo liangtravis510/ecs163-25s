@@ -8,26 +8,36 @@
 	<script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-	<!-- Loading overlay -->
-	<div id="loading-overlay">
-		<div id="loading-text">Loading Pokémon Dashboard...</div>
-	</div>
+    <!-- Header OUTSIDE the grid -->
+    <header id="dashboard-header">
+        <h1>Pokémon Dashboard</h1>
+        <p>
+            For this dashboard, we are going to explore 
+        </p>
+    </header>
 
-	<!-- Tooltip -->
-	<div id="tooltip"></div>
+    <!-- Loading overlay -->
+    <div id="loading-overlay">
+        <div id="loading-text">Loading Pokémon Dashboard...</div>
+    </div>
 
-	<!-- Dashboard Views -->
-	<div id="overview"></div>
-	<div id="view1">
-		<!-- Dropdown for Pokémon selection -->
-		<select id="pokemon-select"></select>
-		<svg></svg>
-	</div>
-	<div id="view2">
-    <input type="text" id="pokemon-search" placeholder="Search Pokémon...">
-    <ul id="pokemon-suggestions" style="position:absolute; top:40px; left:10px; background:white; border:1px solid #ccc; padding:0; margin:0; list-style:none; z-index:10; max-height:150px; overflow-y:auto;"></ul>
-  </div>
+    <!-- Tooltip -->
+    <div id="tooltip"></div>
 
-	<script src="main.js"></script>
+    <!-- Dashboard Views in a new container grid -->
+    <div id="dashboard-container">
+        <div id="overview"></div>
+        <div id="view1">
+            <!-- Dropdown for Pokémon selection -->
+            <select id="pokemon-select"></select>
+            <svg></svg>
+        </div>
+        <div id="view2">
+            <input type="text" id="pokemon-search" placeholder="Search Pokémon..." autocomplete="off">
+            <ul id="pokemon-suggestions"></ul>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
 </body>
 </html>

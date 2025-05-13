@@ -1,3 +1,11 @@
+const pokemonTypeColors = {
+    "Normal": "#A8A77A", "Fire": "#EE8130", "Water": "#6390F0", "Electric": "#F7D02C",
+    "Grass": "#7AC74C", "Ice": "#96D9D6", "Fighting": "#C22E28", "Poison": "#A33EA1",
+    "Ground": "#E2BF65", "Flying": "#A98FF3", "Psychic": "#F95587", "Bug": "#A6B91A",
+    "Rock": "#B6A136", "Ghost": "#735797", "Dragon": "#6F35FC", "Dark": "#705746",
+    "Steel": "#B7B7CE", "Fairy": "#D685AD", "None": "#D3D3D3"
+};
+
 d3.csv("pokemon.csv").then(function(data) {
 	data.forEach(d => {
     d.Total = +d.Total;
@@ -22,124 +30,138 @@ d3.csv("pokemon.csv").then(function(data) {
 });
 
 function createBarChart(data) {
-	const svg = d3.select("#overview").append("svg");
-	const width = svg.node().clientWidth;
-	const height = svg.node().clientHeight;
-	const margin = { top: 60, right: 200, bottom: 120, left: 60 };
-	const innerWidth = width - margin.left - margin.right;
-	const innerHeight = height - margin.top - margin.bottom;
+    const svg = d3.select("#overview").append("svg");
+    const width = svg.node().clientWidth;
+    const height = svg.node().clientHeight;
+    const margin = { top: 50, right: 200, bottom: 70, left: 60 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
 
-	const primaryTypes = Array.from(new Set(data.map(d => d.Type_1))).sort();
-	const secondaryTypes = Array.from(new Set(data.map(d => d.Type_2))).sort();
+    // Safe extraction of all unique types from both Type_1 and Type_2
+    const types = Array.from(new Set(
+        data.flatMap(d => [d.Type_1, d.Type_2])
+    )).filter(d => d && d !== "None").sort();
 
-	const preparedData = primaryTypes.map(type1 => {
-		const row = { Type_1: type1 };
-		secondaryTypes.forEach(type2 => {
-			row[type2] = data.filter(d => d.Type_1 === type1 && d.Type_2 === type2).length;
-		});
-		return row;
-	});
+    // Color scale using your predefined pokemonTypeColors or fallback
+    const colorScale = d3.scaleOrdinal()
+        .domain(types)
+        .range(types.map(type => pokemonTypeColors[type] || "#ccc"));
 
-	const stack = d3.stack().keys(secondaryTypes);
-	const stackedData = stack(preparedData);
+    // Count by Generation and Type_1
+    const grouped = d3.rollup(data, v => v.length, d => d.Generation, d => d.Type_1);
 
-	const xScale = d3.scaleBand()
-		.domain(primaryTypes)
-		.range([0, innerWidth])
-		.padding(0.2);
+    const generations = Array.from(grouped.keys()).sort();
+    const stackData = generations.map(gen => {
+        const entry = { Generation: gen };
+        const typeMap = grouped.get(gen) || new Map();
+        types.forEach(type => {
+            entry[type] = typeMap.get(type) || 0;
+        });
+        return entry;
+    });
 
-	const yMax = d3.max(preparedData, d => d3.sum(secondaryTypes, k => d[k]));
-	const yScale = d3.scaleLinear()
-		.domain([0, yMax])
-		.range([innerHeight, 0]);
+    const stackGenerator = d3.stack()
+        .keys(types);
 
-	const pokemonTypeColors = {
-		"Normal": "#A8A77A", "Fire": "#EE8130", "Water": "#6390F0", "Electric": "#F7D02C",
-		"Grass": "#7AC74C", "Ice": "#96D9D6", "Fighting": "#C22E28", "Poison": "#A33EA1",
-		"Ground": "#E2BF65", "Flying": "#A98FF3", "Psychic": "#F95587", "Bug": "#A6B91A",
-		"Rock": "#B6A136", "Ghost": "#735797", "Dragon": "#6F35FC", "Dark": "#705746",
-		"Steel": "#B7B7CE", "Fairy": "#D685AD", "None": "#D3D3D3"
-	};
+    const stackSeries = stackGenerator(stackData);
 
-	const colorScale = d3.scaleOrdinal()
-		.domain(secondaryTypes)
-		.range(secondaryTypes.map(type => pokemonTypeColors[type] || "#D3D3D3"));
+    const xScale = d3.scaleBand()
+        .domain(generations)
+        .range([0, innerWidth])
+        .padding(0.2);
 
-	const chart = svg.append("g")
-		.attr("transform", `translate(${margin.left},${margin.top})`);
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(stackData, d => d3.sum(types, t => d[t]))])
+        .range([innerHeight, 0]);
 
-	const tooltip = d3.select("#tooltip");
+    const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
-	chart.selectAll(".layer")
-		.data(stackedData)
-		.enter()
-		.append("g")
-		.attr("fill", d => colorScale(d.key))
-		.selectAll("rect")
-		.data(d => d)
-		.enter()
-		.append("rect")
-		.attr("x", d => xScale(d.data.Type_1))
-		.attr("y", d => yScale(d[1]))
-		.attr("height", d => yScale(d[0]) - yScale(d[1]))
-		.attr("width", xScale.bandwidth())
-		.on("mouseover", function(event, d) {
-			const secondaryType = d3.select(this.parentNode).datum().key;
-			const primaryType = d.data.Type_1;
-			const count = d.data[secondaryType];
+    // Tooltip reference
+    const tooltip = d3.select("#tooltip");
 
-			tooltip
-				.style("display", "block")
-				.html(`
-					<strong>Primary:</strong> ${primaryType}<br>
-					<strong>Secondary:</strong> ${secondaryType}<br>
-					<strong>Count:</strong> ${count}
-				`);
-		})
-		.on("mousemove", function(event) {
-			tooltip
-				.style("left", (event.pageX + 10) + "px")
-				.style("top", (event.pageY + 10) + "px");
-		})
-		.on("mouseout", function() {
-			tooltip.style("display", "none");
-		});
+    // Draw stacked bars with correct hover behavior
+    chart.selectAll(".serie")
+        .data(stackSeries)
+        .enter()
+        .append("g")
+        .attr("fill", d => colorScale(d.key))
+        .each(function(series) {
+            d3.select(this).selectAll("rect")
+                .data(series)
+                .enter()
+                .append("rect")
+                .attr("x", d => xScale(d.data.Generation))
+                .attr("y", d => yScale(d[1]))
+                .attr("height", d => yScale(d[0]) - yScale(d[1]))
+                .attr("width", xScale.bandwidth())
+                .on("mouseover", function(event, d) {
+                    const type = series.key;
+                    const count = d[1] - d[0];
 
-	chart.append("g")
-		.attr("transform", `translate(0,${innerHeight})`)
-		.call(d3.axisBottom(xScale))
-		.selectAll("text")
-		.attr("transform", "rotate(-45)")
-		.attr("dx", "-0.8em")
-		.attr("dy", "0.15em")
-		.style("text-anchor", "end");
+                    tooltip
+                        .style("display", "block")
+                        .html(`<strong>${type}</strong><br>Generation ${d.data.Generation}<br>Count: ${count}`);
+                })
+                .on("mousemove", function(event) {
+                    tooltip
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY + 10) + "px");
+                })
+                .on("mouseout", function() {
+                    tooltip.style("display", "none");
+                });
+        });
 
-	chart.append("g")
-		.call(d3.axisLeft(yScale));
+    // Axes
+    chart.append("g")
+        .attr("transform", `translate(0,${innerHeight})`)
+        .call(d3.axisBottom(xScale).tickFormat(d => "Gen " + d));
 
-	svg.append("text")
-		.attr("x", width / 2)
-		.attr("y", margin.top / 2)
-		.attr("text-anchor", "middle")
-		.attr("font-size", "16px")
-		.text("Primary Types vs. Secondary Types");
+    chart.append("g")
+        .call(d3.axisLeft(yScale));
 
-	const legend = svg.append("g")
-		.attr("transform", `translate(${innerWidth + margin.left + 20},${margin.top})`);
+    // X-axis label
+    chart.append("text")
+        .attr("x", innerWidth / 2)
+        .attr("y", innerHeight + 50)
+        .attr("text-anchor", "middle")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .text("Generations");
 
-	secondaryTypes.forEach((type, i) => {
-		const g = legend.append("g").attr("transform", `translate(0,${i * 20})`);
-		g.append("rect")
-			.attr("width", 15)
-			.attr("height", 15)
-			.attr("fill", colorScale(type));
-		g.append("text")
-			.attr("x", 20)
-			.attr("y", 12)
-			.text(type);
-	});
+    // Y-axis label
+    chart.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -innerHeight / 2)
+        .attr("y", -45)
+        .attr("text-anchor", "middle")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .text("Count");
+
+    // Legend (2 columns)
+    const legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", `translate(${width - margin.right + 20}, ${margin.top})`);
+
+    legend.selectAll("g")
+        .data(types)
+        .enter()
+        .append("g")
+        .attr("transform", (d, i) => `translate(${(i % 2) * 100}, ${Math.floor(i / 2) * 20})`)
+        .each(function(d) {
+            d3.select(this).append("rect")
+                .attr("width", 15)
+                .attr("height", 15)
+                .attr("fill", colorScale(d));
+
+            d3.select(this).append("text")
+                .attr("x", 20)
+                .attr("y", 12)
+                .text(d);
+        });
 }
-
 
 
 function createRadarChart(data) {
@@ -148,7 +170,7 @@ function createRadarChart(data) {
 	const height = svg.node().clientHeight;
 
 	// Setup margin and chart area
-	const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+	const margin = { top: 10, right: 50, bottom: 50, left: 50 };
 	const innerWidth = width - margin.left - margin.right;
 	const innerHeight = height - margin.top - margin.bottom;
 	const centerX = margin.left + innerWidth / 2;
@@ -284,7 +306,7 @@ function createParallelCoordinates(data) {
 	};
 
 	const chart = svg.append("g")
-		.attr("transform", `translate(${margin.left},${margin.top - 20})`); // adjust up slightly if needed
+		.attr("transform", `translate(${margin.left},${margin.top + 20})`); // adjust up slightly if needed
 
 	function path(d) {
 		return d3.line()(stats.map(stat => [xScale(stat), yScales[stat](+d[stat])]));
@@ -334,7 +356,7 @@ function createParallelCoordinates(data) {
 
 		svg.append("text")
 			.attr("x", margin.left + xScale(stat))
-			.attr("y", margin.top + innerHeight + 15)
+			.attr("y", margin.top + innerHeight + 50)
 			.attr("text-anchor", "middle")
 			.style("font-size", "14px")
 			.style("font-weight", "bold")

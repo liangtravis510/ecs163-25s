@@ -1,8 +1,38 @@
-/* Layout grid */
+/* Overall body layout */
 body {
-  width: 100%;
-  height: 100%;
   margin: 0;
+  font-family: "Nunito", "Futura", "Century Gothic", sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Header always at the top */
+#dashboard-header {
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  flex: 0 0 auto;
+}
+
+#dashboard-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: #3b4cca;
+}
+
+#dashboard-header p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Dashboard grid area */
+#dashboard-container {
+  flex: 1 1 auto;
   display: grid;
   grid-template-areas:
     "overview view1"
@@ -10,12 +40,6 @@ body {
   grid-template-rows: 50% 50%;
   grid-template-columns: 50% 50%;
   background-color: #f9f9f9;
-}
-
-body,
-text,
-svg text {
-  font-family: "Nunito", "Futura", "Century Gothic", sans-serif;
 }
 
 #overview {
@@ -34,6 +58,12 @@ svg text {
 #view2 {
   grid-area: view2;
   position: relative;
+  padding-top: 30px; /* Add padding to push the chart down safely */
+}
+
+#view2 svg {
+  width: 100%;
+  height: calc(100% - 50px); /* Adjust SVG height to account for padding */
 }
 
 svg {
@@ -41,51 +71,52 @@ svg {
   height: 100%;
 }
 
-/* Loading overlay */
-#loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2em;
-  z-index: 9999;
-}
-
-/* Tooltip */
+/* Tooltip fixed relative to body */
 #tooltip {
-  position: fixed;
+  position: absolute;
   display: none;
   pointer-events: none;
   background: white;
   border: 1px solid #ccc;
-  padding: 6px;
-  border-radius: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
   font-size: 12px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+  color: #333;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
 
-/* Dropdown menu inside view1 */
-#view1 select {
+/* Search & suggestions */
+#pokemon-search {
   position: absolute;
   top: 10px;
   left: 10px;
-  z-index: 10;
-  padding: 4px 8px;
-  font-size: 14px;
-  border-radius: 4px;
+  padding: 6px 10px;
   border: 1px solid #ccc;
-  background: white;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 10;
 }
 
-#view2 pokemon-search {
+#pokemon-suggestions {
   position: absolute;
-  top: 10px;
+  top: 40px;
   left: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0;
+  margin: 0;
+  list-style: none;
   z-index: 10;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+#pokemon-suggestions li {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+#pokemon-suggestions li:hover {
+  background-color: #f0f0f0;
 }
