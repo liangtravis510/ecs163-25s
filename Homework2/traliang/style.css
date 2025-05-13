@@ -5,9 +5,12 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100%;
+
+  /* Prevent horizontal scroll globally */
+  overflow-x: hidden;
 }
 
-/* Header always at the top */
 #dashboard-header {
   width: 100%;
   padding: 20px;
@@ -15,6 +18,7 @@ body {
   border-bottom: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   flex: 0 0 auto;
+  box-sizing: border-box;
 }
 
 #dashboard-header h1 {
@@ -31,9 +35,11 @@ body {
   white-space: normal;
   line-height: 1.6;
   margin: 0;
+  font-size: 15px;
+  color: #333;
 }
 
-/* Dashboard grid area */
+/* Dashboard grid area fills the rest of the screen under header */
 #dashboard-container {
   flex: 1 1 auto;
   display: grid;
@@ -43,6 +49,8 @@ body {
   grid-template-rows: 50% 50%;
   grid-template-columns: 50% 50%;
   background-color: #f9f9f9;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #overview {
@@ -50,6 +58,7 @@ body {
   border-right: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   position: relative;
+  overflow-x: auto;
 }
 
 #view1 {
@@ -61,17 +70,18 @@ body {
 #view2 {
   grid-area: view2;
   position: relative;
-  padding-top: 30px; /* Add padding to push the chart down safely */
+  padding-top: 30px;
 }
 
 #view2 svg {
   width: 100%;
-  height: calc(100% - 50px); /* Adjust SVG height to account for padding */
+  height: calc(100% - 50px);
 }
 
 svg {
   width: 100%;
   height: 100%;
+  display: block;
 }
 
 /* Tooltip fixed relative to body */

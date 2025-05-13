@@ -29,20 +29,24 @@ d3.csv("pokemon.csv").then(function(data) {
 	d3.select("#loading-overlay").style("display", "none");
 });
 
+/**
+ * Creates a stacked bar chart showing Pokémon type distribution per generation.
+ * @param {Array} data - The loaded Pokémon data.
+ */
 function createBarChart(data) {
     const svg = d3.select("#overview").append("svg");
     const width = svg.node().clientWidth;
     const height = svg.node().clientHeight;
-    const margin = { top: 50, right: 200, bottom: 70, left: 60 };
+    const margin = { top: 20, right: 200, bottom: 70, left: 60 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-    // Safe extraction of all unique types from both Type_1 and Type_2
+    // Extract all unique types from both Type_1 and Type_2
     const types = Array.from(new Set(
         data.flatMap(d => [d.Type_1, d.Type_2])
     )).filter(d => d && d !== "None").sort();
 
-    // Color scale using your predefined pokemonTypeColors or fallback
+    // Color scale using pokemonTypeColors or fallback
     const colorScale = d3.scaleOrdinal()
         .domain(types)
         .range(types.map(type => pokemonTypeColors[type] || "#ccc"));
@@ -80,7 +84,7 @@ function createBarChart(data) {
     // Tooltip reference
     const tooltip = d3.select("#tooltip");
 
-    // Draw stacked bars with correct hover behavior
+    // Draw stacked bars with hover tool
     chart.selectAll(".serie")
         .data(stackSeries)
         .enter()
@@ -140,10 +144,10 @@ function createBarChart(data) {
         .style("font-weight", "bold")
         .text("Count");
 
-    // Legend (2 columns)
+    // Legend 
     const legend = svg.append("g")
         .attr("class", "legend")
-        .attr("transform", `translate(${width - margin.right + 20}, ${margin.top})`);
+        .attr("transform", `translate(${width - margin.right + 10}, ${margin.top})`);
 
     legend.selectAll("g")
         .data(types)
@@ -163,7 +167,11 @@ function createBarChart(data) {
         });
 }
 
-
+/**
+ * Creates an interactive radar chart for viewing a Pokémon's stats.
+ * It will dynamically scale based off the Pokémon's highest stat
+ * @param {Array} data - The loaded Pokémon data.
+ */
 function createRadarChart(data) {
 	const svg = d3.select("#view1").select("svg");
 	const width = svg.node().clientWidth;
@@ -177,7 +185,6 @@ function createRadarChart(data) {
 	const centerY = margin.top + innerHeight / 2;
 	const radius = Math.min(innerWidth, innerHeight) / 2 - 20;
 
-	// Confirm actual stat keys from your dataset
 	const stats = ["HP", "Attack", "Defense", "Sp_Atk", "Sp_Def", "Speed"];
 
 	// Create the dropdown
@@ -188,7 +195,7 @@ function createRadarChart(data) {
 		.append("option")
 		.text(d => d.Name);
 
-	// Initialize chart with first Pokémon
+	// Defaults to Bulbasaur
 	updateChart(data[0]);
 
 	// Update chart on selection
@@ -198,11 +205,16 @@ function createRadarChart(data) {
 		updateChart(selectedPokemon);
 	});
 
+	/**
+     * Updates the radar chart for the given Pokémon.
+     * Scales the chart to the Pokémon's highest stat.
+     * @param {Object} pokemon - The selected Pokémon data object.
+     */
 	function updateChart(pokemon) {
 		svg.selectAll("*").remove();
 
 		const radarData = stats.map(stat => +pokemon[stat] || 0);
-		const maxStat = d3.max(radarData) + 5 || 100; // Fallback to 100 if missing
+		const maxStat = d3.max(radarData) + 5 
 
 		const angleSlice = (Math.PI * 2) / stats.length;
 		const scale = d3.scaleLinear().domain([0, maxStat]).range([0, radius]);
@@ -221,7 +233,7 @@ function createRadarChart(data) {
 				.attr("y2", centerY + scale(maxStat) * Math.sin(angle))
 				.attr("stroke", "#ccc");
 
-			// Axis label (Stat name)
+			// Axis label 
 			svg.append("text")
 				.attr("x", labelX)
 				.attr("y", labelY)
@@ -231,7 +243,7 @@ function createRadarChart(data) {
 				.style("font-size", "12px")
 				.text(stat.replace("_", " "));
 
-			// Stat number (Actual stat value for selected Pokémon)
+			// Stat numbers
 			svg.append("text")
 				.attr("x", labelX)
 				.attr("y", labelY + 15)
@@ -242,7 +254,7 @@ function createRadarChart(data) {
 				.text(+pokemon[stat] || 0);
 		});
 
-		// Create the radar polygon path using your approach
+		// Create the radar polygon path 
 		const line = d3.lineRadial()
 			.radius((d) => scale(d))
 			.angle((d, i) => i * angleSlice)
@@ -272,14 +284,16 @@ function createRadarChart(data) {
 	}
 }
 
-
-
-
+/**
+ * Creates a parallel coordinates plot for comparing Pokémon across multiple stats.
+ * It includes a search functionality, highlight, and hover tooltips to find out the name .
+ * @param {Array} data - The loaded Pokémon data.
+ */
 function createParallelCoordinates(data) {
 	const svg = d3.select("#view2").append("svg");
 	const width = svg.node().clientWidth;
 	const height = svg.node().clientHeight;
-	const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+	const margin = { top: 10, right: 50, bottom: 50, left: 50 };
 	const innerWidth = width - margin.left - margin.right;
 	const innerHeight = height - margin.top - margin.bottom;
 
@@ -298,17 +312,14 @@ function createParallelCoordinates(data) {
 		.range([0, innerWidth])
 		.padding(0.5);
 
-	const pokemonTypeColors = {
-		"Normal": "#A8A77A", "Fire": "#EE8130", "Water": "#6390F0", "Electric": "#F7D02C",
-		"Grass": "#7AC74C", "Ice": "#96D9D6", "Fighting": "#C22E28", "Poison": "#A33EA1",
-		"Ground": "#E2BF65", "Flying": "#A98FF3", "Psychic": "#F95587", "Bug": "#A6B91A",
-		"Rock": "#B6A136", "Ghost": "#735797", "Dragon": "#6F35FC", "Dark": "#705746",
-		"Steel": "#B7B7CE", "Fairy": "#D685AD", "None": "#D3D3D3"
-	};
-
 	const chart = svg.append("g")
-		.attr("transform", `translate(${margin.left},${margin.top + 20})`); // adjust up slightly if needed
+		.attr("transform", `translate(${margin.left},${margin.top + 20})`);
 
+	/**
+	 * Generates the path string for a Pokémon across the axes.
+	 * @param {Object} d - Pokémon data object.
+	 * @returns {string} SVG path string
+	 */
 	function path(d) {
 		return d3.line()(stats.map(stat => [xScale(stat), yScales[stat](+d[stat])]));
 	}
@@ -397,12 +408,19 @@ function createParallelCoordinates(data) {
 		}
 	});
 
+	/**
+     * Highlights the Pokémon line matching the searched name.
+     * @param {string} searchName - Pokémon name to highlight.
+     */
 	function highlightPokemon(searchName) {
 		lines
 			.attr("stroke-width", d => d.Name.toLowerCase() === searchName ? 5 : 1)
-			.attr("opacity", d => d.Name.toLowerCase() === searchName ? 1 : 0.05);
+			.attr("opacity", d => d.Name.toLowerCase() === searchName ? 1 : 0.01);
 	}
 
+	/**
+     * Resets all Pokémon lines to default stroke width and opacity.
+     */
 	function resetLines() {
 		lines
 			.attr("stroke-width", 1)
