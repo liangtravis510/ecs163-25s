@@ -4,9 +4,9 @@ This homework assignment focus on making a data visualization dashboard for expl
 
 ## Features
 
-- 📊 **Stacked Bar Chart:** Overview of Pokémon type distribution per generation.
-- 🕸 **Radar Chart:** Focus view on an individual Pokémon's battle stats.
-- 📈 **Parallel Coordinates Plot:** Advanced comparison across multiple stats, with search and highlight interaction.
+- **Stacked Bar Chart:** Overview of Pokémon type distribution per generation.
+- **Radar Chart:** Focus view on an individual Pokémon's battle stats.
+- **Parallel Coordinates Plot:** Advanced comparison across multiple stats, with search and highlight interaction.
 
 ## Screenshots
 
@@ -22,6 +22,6 @@ This homework assignment focus on making a data visualization dashboard for expl
 
 ![Radar Chart](images/radar_chart.png)
 
-### Parallel Coordinates Plot with Search
+### Parallel Coordinates Plot
 
 ![Parallel Coordinates](images/parallel_coordinates.png)
