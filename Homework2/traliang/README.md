@@ -28,4 +28,4 @@ This homework assignment focus on making a data visualization dashboard for expl
 
 ### Hover funcitonallity
 
-![Hover Function1](hover_function1.png)
+![Hover Function1](images/hover_function1.png)
