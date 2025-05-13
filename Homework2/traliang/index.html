@@ -1,43 +1,33 @@
 <!doctype html>
-<html lang="en" style="width:100%; height:100%;">
+<html style="width:100%;height:100%;">
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="">
-  <title>Homework 2</title>
-  <style>
-    body {
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      font-family: sans-serif;
-    }
-    .top {
-      display: flex;
-      flex: 1;
-    }
-    .view {
-      flex: 1;
-      border: 1px solid #ccc;
-    }
-    .bottom {
-      flex: 1;
-      border-top: 1px solid #ccc;
-    }
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-  </style>
+	<meta charset="utf-8">
+	<title>Pokémon Dashboard</title>
+	<link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+	<script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-  <div class="top">
-    <div id="view1" class="view"></div>
-    <div id="view2" class="view"></div>
-  </div>
-  <div id="view3" class="bottom"></div>
+	<!-- Loading overlay -->
+	<div id="loading-overlay">
+		<div id="loading-text">Loading Pokémon Dashboard...</div>
+	</div>
 
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="main.js"></script>
+	<!-- Tooltip -->
+	<div id="tooltip"></div>
+
+	<!-- Dashboard Views -->
+	<div id="overview"></div>
+	<div id="view1">
+		<!-- Dropdown for Pokémon selection -->
+		<select id="pokemon-select"></select>
+		<svg></svg>
+	</div>
+	<div id="view2">
+    <input type="text" id="pokemon-search" placeholder="Search Pokémon...">
+    <ul id="pokemon-suggestions" style="position:absolute; top:40px; left:10px; background:white; border:1px solid #ccc; padding:0; margin:0; list-style:none; z-index:10; max-height:150px; overflow-y:auto;"></ul>
+  </div>
+
+	<script src="main.js"></script>
 </body>
 </html>
