@@ -396,7 +396,11 @@ function createParallelCoordinates(data) {
   let isSearchActive = false;
   let currentHighlightedName = null;
 
-  const svg = d3.select("#view2").append("svg");
+  const svg = d3
+    .select("#view2")
+    .append("svg")
+    .attr("width", 1600) // Adjust as needed
+    .attr("height", 400); // Adjust as needed
   const width = svg.node().clientWidth;
   const height = svg.node().clientHeight;
   const margin = { top: 10, right: 50, bottom: 50, left: 50 };
