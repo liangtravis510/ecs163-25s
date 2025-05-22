@@ -56,6 +56,13 @@ const generationColors = {
  * Bins total stats in 100-point ranges and uses themed colors per generation.
  * @param {Array} data - Pokémon dataset
  */
+/**
+ * Creates a bar chart that shows the number of Pokémon grouped by their total stat score
+ * in 100-point bins, for a specific generation selected via slider input.
+ * The chart uses Pokémon game-themed colors for each generation.
+ *
+ * @param {Array<Object>} data - The Pokémon dataset, with stats and generation info
+ */
 function createStatDistributionChart(data) {
   const svg = d3
     .select("#overview")
@@ -111,7 +118,7 @@ function createStatDistributionChart(data) {
   const slider = d3.select("#gen-slider");
   const sliderValue = d3.select("#gen-slider-value");
 
-  // 🔁 Update chart when generation changes
+  // Update chart when generation changes
   function updateChart(gen) {
     const filtered = data.filter((d) => d.Generation === +gen);
     const maxStat = d3.max(filtered, (d) => d.Total);
@@ -172,6 +179,13 @@ function createStatDistributionChart(data) {
  * It will dynamically scale based off the Pokémon's highest stat
  * @param {Array} data - The loaded Pokémon data.
  */
+/**
+ * Creates an interactive radar chart to compare the stats of two selected Pokémon.
+ * Dynamically updates colors and values as the user selects Pokémon from dropdowns.
+ * If both Pokémon are the same type, a hue shift is applied to differentiate colors.
+ *
+ * @param {Array<Object>} data - The Pokémon dataset
+ */
 function createRadarChart(data) {
   const svg = d3.select("#view1").select("svg");
   const width = svg.node().clientWidth;
@@ -222,6 +236,14 @@ function createRadarChart(data) {
    * @returns {string} The resulting color in HSL string format.
    */
 
+  /**
+   * Shifts the hue of a hex color string by a specified number of degrees.
+   * Used to visually distinguish two Pokémon of the same type in the radar chart.
+   *
+   * @param {string} hex - A hex color string (e.g., "#FF0000")
+   * @param {number} degree - Degrees to shift hue
+   * @returns {string} - The new color as an HSL string
+   */
   function shiftHue(hex, degree) {
     let hsl = d3.hsl(hex);
     hsl.h = (hsl.h + degree) % 360;
@@ -359,6 +381,16 @@ function createRadarChart(data) {
  * Creates a parallel coordinates plot for comparing Pokémon across multiple stats.
  * Includes search, hover tooltips, and filtering by Type 1 and Type 2.
  * @param {Array} data - The Pokémon dataset
+ */
+/**
+ * Creates a parallel coordinates chart for comparing Pokémon stats across multiple axes.
+ * Includes features like:
+ * - Hover tooltips with sprites and stat values
+ * - Search input to highlight a specific Pokémon
+ * - Type 1 and Type 2 filters with checkboxes and dropdowns
+ * - Reset button to clear all filters and restore default view
+ *
+ * @param {Array<Object>} data - The Pokémon dataset
  */
 function createParallelCoordinates(data) {
   let isSearchActive = false;
@@ -545,7 +577,7 @@ function createParallelCoordinates(data) {
   function highlightPokemon(searchName) {
     isSearchActive = true;
     currentHighlightedName = searchName;
-    applyTypeFilter(); // respects current filters while highlighting
+    applyTypeFilter();
     allLines
       .attr("stroke-width", (d) =>
         d.Name.toLowerCase() === searchName ? 5 : 1
@@ -615,7 +647,7 @@ function createParallelCoordinates(data) {
   enableType2Filter.on("change", applyTypeFilter);
   type2Select.on("change", applyTypeFilter);
 
-  // 🔁 Reset Filters Button
+  // Rest filter button
   d3.select("#reset-parallel-filters").on("click", () => {
     d3.select("#pokemon-search").property("value", "");
     d3.select("#enable-type-filter").property("checked", false);
