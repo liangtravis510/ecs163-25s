@@ -134,6 +134,7 @@ function createStatDistributionChart(data) {
 
     const bars = chart.selectAll(".bar").data(bins, (d) => d.x0);
 
+    // Transition exiting bars and animate updates for smooth switching between generations
     bars.exit().remove();
 
     bars
@@ -463,6 +464,7 @@ function createParallelCoordinates(data) {
     });
   });
 
+  // Draw a path for each Pokémon's stat line in the parallel coordinate chart
   const allLines = chart
     .selectAll(".pokemon-line")
     .data(data)
@@ -556,6 +558,7 @@ function createParallelCoordinates(data) {
       )
       .slice(0, 10);
 
+    // Clear previous suggestions before adding new ones
     suggestionsBox.selectAll("li").remove();
 
     suggestions.forEach((name) => {
