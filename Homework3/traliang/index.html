@@ -2,32 +2,38 @@
 <html style="width:100%;height:100%;">
 <head>
 	<meta charset="utf-8">
-	<title>Pokémon Dashboard</title>
+	<title>Exploring Pokémon Stats</title>
 	<link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 	<script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
     <header id="dashboard-header">
-        <h1>Pokémon Dashboard</h1>
+        <h1>Exploring Pokémon Stats</h1>
         <p>
             For the two interaction techniques I've chosen to implement, I've gone ahead and went with selection and brushing
         </p>
         <h5>Stacked Bar Chart</h5>
         <p>
-            For the stacked bar chart, I've gone ahead and implemented a way such that when you click on the legend, it will show all the availiable type_1 types of all the generations
-            in the dataset
+            For the stacked bar chart, I've gone ahead and implemented a way such that when you click on the legend, it will show all the available type_1 types of all the generations
+            in the dataset. In addition I've added a reset button to reset the dataset for the user. The stacked bar chart helps to show the distribution of types across all the generation and the 
+            interaction through selection helps focus the users on specific types for all the generations.
         </p>
         <h5>Radar Bar Chart</h5>
         <p>
             For the radar chart, I've implemented a way for the user to select two different pokemon of their choosing using a drop down menu to choose two pokemon and compare their
-            individual stats. For differencianting the two, I've choosen to use their type_1 types and if they shared the same type_1 types I've gone ahead and altered the hue.            
+            individual stats. For differentiating the two, I've chosen to use their type_1 types and if they shared the same type_1 types, I've gone ahead and altered the hue. 
+            The goal of this chart now is to let users fiddle around with 
+            searching different pokmeon and comparing the individual stat totals and see how different they are in certain aspects such as HP or even speed      
             
         </p>
          <h5>Parallel Coordinate Plot</h5>
         <p>
-            For the advanced visualization, I've previously added a highlight feature on search as well as show its name of mouse hover. I've gone ahead and added an addition aspect in the
-            search where now when moused over the highlighted region that it will show the sprite as well as its type_1 and type_2 typings.
+            For the advanced visualization, I've previously added a highlight feature on search as well as show its name on mouse hover. 
+            I've gone ahead and added an addition aspect in the
+            search where now when moused over the highlighted region that it will show the sprite as well as a detailed information card about the pokemon. 
+            In addition, without search you can hover over certain lines to see stats of different pokemon.
+            The goal of this chart was to give the user a more detailed view of a specific pokemon and how it stacks up individually and gives the exact stat totals on hover
         </p>
     </header>
 

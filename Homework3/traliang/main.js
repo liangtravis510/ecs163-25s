@@ -9,7 +9,7 @@ const pokemonTypeColors = {
 d3.csv("pokemon.csv").then(function(data) {
 	data.forEach(d => {
         d.Total = +d.Total;
-         d.HP = +d.HP;
+        d.HP = +d.HP;
 	    d.Attack = +d.Attack;
 	    d.Defense = +d.Defense;
 		d["Sp. Atk"] = +d["Sp. Atk"];
@@ -38,6 +38,14 @@ function createBarChart(data) {
     const svg = d3.select("#overview").append("svg")
         .attr("width", 640)
         .attr("height", 500);
+    svg.append("text")
+        .attr("x", 280) 
+        .attr("y", 15)
+        .attr("text-anchor", "middle")
+        .style("font-size", "15px")
+        .style("font-weight", "bold")
+        .text("Pokémon Type Distribution by Generation");
+
 
     const margin = { top: 20, right: 200, bottom: 100, left: 100 };
     const width = +svg.attr("width") - margin.left - margin.right;
@@ -156,7 +164,18 @@ function createBarChart(data) {
     legendItems.append("rect")
         .attr("width", 15)
         .attr("height", 15)
-        .attr("fill", d => colorScale(d));
+        .attr("fill", d => colorScale(d))
+        .attr("stroke", "none") 
+        .attr("stroke-width", 2)
+        .on("mouseover", function() {
+            d3.select(this)
+            .attr("stroke", "black");
+        })
+        .on("mouseout", function(d) {
+            const isSelected = selectedType === d;
+            d3.select(this)
+                .attr("stroke", isSelected ? "black" : "none");
+        });
 
     legendItems.append("text")
         .attr("x", 20)
@@ -180,6 +199,13 @@ function createRadarChart(data) {
     const svg = d3.select("#view1").select("svg");
     const width = svg.node().clientWidth;
     const height = svg.node().clientHeight;
+    svg.append("text")
+        .attr("x", 750) 
+        .attr("y", 15)
+        .attr("text-anchor", "middle")
+        .style("font-size", "18px")
+        .style("font-weight", "bold")
+        .text("Pokemon Comparison Radar Chart");
 
     const margin = { top: 10, right: 50, bottom: 50, left: 50 };
     const innerWidth = width - margin.left - margin.right;
@@ -200,7 +226,7 @@ function createRadarChart(data) {
 
     /**
     * Shifts the hue of a hex color by a given number of degrees.
-     * @param {string} hex - The base hex color 
+    * @param {string} hex - The base hex color 
     * @param {number} degree - Degrees to shift the hue.
     * @returns {string} The resulting color in HSL string format.
     */
@@ -338,6 +364,14 @@ function createParallelCoordinates(data) {
 	const innerWidth = width - margin.left - margin.right;
 	const innerHeight = height - margin.top - margin.bottom;
 
+    svg.append("text")
+        .attr("x", 965) 
+        .attr("y", 20)
+        .attr("text-anchor", "middle")
+        .style("font-size", "18px")
+        .style("font-weight", "bold")
+        .text("Parallel Coordinate Chart");
+
 	const stats = ["HP", "Attack", "Defense", "Sp_Atk", "Sp_Def", "Speed"];
 
 	// Create scales
@@ -398,7 +432,10 @@ function createParallelCoordinates(data) {
 		pokemonInfo.set(d.Name, {
 			type1: d.Type_1,
 			type2: d.Type_2,
-			image: `https://play.pokemonshowdown.com/sprites/ani/${showdownName}.gif`
+			image: `https://play.pokemonshowdown.com/sprites/ani/${showdownName}.gif`,
+            HP: d.HP,
+            Attack: d.Attack,
+            Defense: d.Defense,
 		});
 	});
 
@@ -422,7 +459,11 @@ function createParallelCoordinates(data) {
 							<div>
 								<strong>${d.Name}</strong><br>
 								Type 1: ${info.type1}<br>
-								Type 2: ${info.type2 || "None"}
+								Type 2: ${info.type2 || "None"}<br>
+                                Attack: ${d.Attack}<br>
+                                Sp. Atk: ${d.Sp_Atk}<br>
+                                Sp. Def: ${d.Sp_Def}<br>
+                                Speed: ${d.Speed}
 							</div>
 						</div>
 					`);
