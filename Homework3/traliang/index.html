@@ -11,29 +11,25 @@
     <header id="dashboard-header">
         <h1>Exploring Pokémon Stats</h1>
         <p>
-            For the two interaction techniques I've chosen to implement, I've gone ahead and went with selection and brushing
+            This dashboard is designed to help users explore how stats in pokemon have evolved over generations and then go into detail on specific pokemon
         </p>
-        <h5>Stacked Bar Chart</h5>
+        </p>
+        <h5>Bar Chart</h5>
         <p>
-            For the stacked bar chart, I've gone ahead and implemented a way such that when you click on the legend, it will show all the available type_1 types of all the generations
-            in the dataset. In addition I've added a reset button to reset the dataset for the user. The stacked bar chart helps to show the distribution of types across all the generation and the 
-            interaction through selection helps focus the users on specific types for all the generations.
+            To give a general overview for the user,  the goal of the bar chart was to show the total stat distributions by generation via a bar chart and see the changes over time. To add some of the requirements for HW3, I've gone ahead 
+            and added some transitions between bar charts as well as fit them color themes of the different generations based on the video game title (ie. red, gold, emerald, diamond, black, X & Y 
+            (I've gone with purple here))
         </p>
         <h5>Radar Bar Chart</h5>
         <p>
-            For the radar chart, I've implemented a way for the user to select two different pokemon of their choosing using a drop down menu to choose two pokemon and compare their
-            individual stats. For differentiating the two, I've chosen to use their type_1 types and if they shared the same type_1 types, I've gone ahead and altered the hue. 
-            The goal of this chart now is to let users fiddle around with 
-            searching different pokmeon and comparing the individual stat totals and see how different they are in certain aspects such as HP or even speed      
+            Once the user has seen the stat distrbutions I figured that the user would then want to see a radar chart to get some insight on specific pokmeon and comparing the two. For this I've gone ahead and 
+            added a drop down menu and animations to show the change in the user's selection and visually give them an idea of the different stat totals.  
             
         </p>
          <h5>Parallel Coordinate Plot</h5>
         <p>
-            For the advanced visualization, I've previously added a highlight feature on search as well as show its name on mouse hover. 
-            I've gone ahead and added an addition aspect in the
-            search where now when moused over the highlighted region that it will show the sprite as well as a detailed information card about the pokemon. 
-            In addition, without search you can hover over certain lines to see stats of different pokemon.
-            The goal of this chart was to give the user a more detailed view of a specific pokemon and how it stacks up individually and gives the exact stat totals on hover
+            This advance visualization was to now focus the user on a specific pokemon either through a filtering out their types or by search the pokemon outright. Here users can hover over the line to see
+            their exact pokemon visually using gifs from Pokemon Showdown website as well as their stats and their type1 or type2 typings. If they choose not to search, they can still hover to see pokeon in the chart
         </p>
     </header>
 
@@ -46,8 +42,13 @@
     <div id="dashboard-container">
 
         <div id="overview">
-            <button id="reset-bar-chart">Reset Chart</button>
+            <div id="gen-slider-controls" style="margin-bottom: 10px;">
+                <label for="gen-slider">Generation:</label>
+                 <input type="range" id="gen-slider" min="1" max="6" step="1" value="1" />
+                <span id="gen-slider-value">Gen 1</span>
+            </div>
         </div>
+
         <div id="view1">
             <!-- Dropdown for Pokémon selection -->
             <select id="pokemon-select"></select>
@@ -57,6 +58,30 @@
         <div id="view2">
             <input type="text" id="pokemon-search" placeholder="Search Pokémon..." autocomplete="off">
             <ul id="pokemon-suggestions"></ul>
+
+            <!-- Type 1 Filter -->
+            <div id="type-filter-controls">
+                <label>
+                    <input type="checkbox" id="enable-type-filter" />
+                    Filter by Type 1
+                </label>
+                <select id="type1-select" disabled>
+                    <option value="">-- Select Type --</option>
+                </select>
+            </div>
+
+             <!-- Type 2 Filter -->
+            <div id="type2-filter-controls" style="margin-top: 10px;">
+                <label>
+                    <input type="checkbox" id="enable-type2-filter" />
+                    Filter by Type 2
+                </label>
+                <select id="type2-select" disabled>
+                    <option value="">-- Select Type --</option>
+                </select>
+            </div>
+            <button id="reset-parallel-filters" style="margin-top: 12px;">Reset Filters</button>
+
         </div>
     </div>
 
