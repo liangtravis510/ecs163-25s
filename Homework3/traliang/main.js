@@ -72,6 +72,11 @@ function createBarChart(data) {
 
     const yAxis = chartGroup.append("g").attr("class", "y-axis");
 
+    /**
+    * Updates the stacked bar chart based on the selected type.
+    * If no type is selected, shows all types.
+     */
+
     function updateStackedBarChart() {
         const filteredKeys = selectedType ? [selectedType] : types;
 
@@ -193,6 +198,13 @@ function createRadarChart(data) {
         "Steel": "#B7B7CE", "Fairy": "#D685AD"
     };
 
+    /**
+    * Shifts the hue of a hex color by a given number of degrees.
+     * @param {string} hex - The base hex color 
+    * @param {number} degree - Degrees to shift the hue.
+    * @returns {string} The resulting color in HSL string format.
+    */
+
     function shiftHue(hex, degree) {
         let hsl = d3.hsl(hex);
         hsl.h = (hsl.h + degree) % 360;
@@ -225,8 +237,11 @@ function createRadarChart(data) {
         updateChart();
     });
 
-    updateChart(); // initial call
+    updateChart(); 
 
+    /**
+     * Updates the radar chart with the currently selected Pokémon stats.
+    */
     function updateChart() {
         const radarData1 = stats.map(stat => +selectedPokemon1[stat] || 0);
         const radarData2 = stats.map(stat => +selectedPokemon2[stat] || 0);
@@ -341,6 +356,11 @@ function createParallelCoordinates(data) {
 	const chart = svg.append("g")
 		.attr("transform", `translate(${margin.left},${margin.top + 20})`);
 
+    /**
+    * Generates the SVG path string for a Pokémon's stats in the parallel coordinates plot.
+    * @param {Object} d - Pokémon data object.
+    * @returns {string} SVG path string.
+    */
 	function path(d) {
 		return d3.line()(stats.map(stat => [xScale(stat), yScales[stat](+d[stat])]));
 	}
@@ -358,6 +378,11 @@ function createParallelCoordinates(data) {
 
 	const tooltip = d3.select("#tooltip");
 
+    /**
+    * Formats a Pokémon name to match Showdown's sprite naming conventions.
+    * @param {string} name - The Pokémon name 
+    * @returns {string} Formatted name for Showdown sprite URL (
+    */
 	function formatShowdownName(name) {
 		return name
 			.toLowerCase()
