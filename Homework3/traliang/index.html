@@ -1,0 +1,59 @@
+<!doctype html>
+<html style="width:100%;height:100%;">
+<head>
+	<meta charset="utf-8">
+	<title>Pokémon Dashboard</title>
+	<link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <header id="dashboard-header">
+        <h1>Pokémon Dashboard</h1>
+        <p>
+            For the two interaction techniques I've chosen to implement, I've gone ahead and went with selection and brushing
+        </p>
+        <h5>Stacked Bar Chart</h5>
+        <p>
+            For the stacked bar chart, I've gone ahead and implemented a way such that when you click on the legend, it will show all the availiable type_1 types of all the generations
+            in the dataset
+        </p>
+        <h5>Radar Bar Chart</h5>
+        <p>
+            For the radar chart, I've implemented a way for the user to select two different pokemon of their choosing using a drop down menu to choose two pokemon and compare their
+            individual stats. For differencianting the two, I've choosen to use their type_1 types and if they shared the same type_1 types I've gone ahead and altered the hue.            
+            
+        </p>
+         <h5>Parallel Coordinate Plot</h5>
+        <p>
+            For the advanced visualization, I've previously added a highlight feature on search as well as show its name of mouse hover. I've gone ahead and added an addition aspect in the
+            search where now when moused over the highlighted region that it will show the sprite as well as its type_1 and type_2 typings.
+        </p>
+    </header>
+
+    <div id="loading-overlay">
+        <div id="loading-text">Loading Pokémon Dashboard...</div>
+    </div>
+
+    <div id="tooltip"></div>
+
+    <div id="dashboard-container">
+
+        <div id="overview">
+            <button id="reset-bar-chart">Reset Chart</button>
+        </div>
+        <div id="view1">
+            <!-- Dropdown for Pokémon selection -->
+            <select id="pokemon-select"></select>
+            <select id="pokemon-select-2"></select>
+            <svg></svg>
+        </div>
+        <div id="view2">
+            <input type="text" id="pokemon-search" placeholder="Search Pokémon..." autocomplete="off">
+            <ul id="pokemon-suggestions"></ul>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
